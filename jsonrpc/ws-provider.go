@@ -108,8 +108,7 @@ func (p *WsProvider) Unsubscribe(method string, id int) error {
 
 func (p *WsProvider) Close() {
 	p.ctxCancel()
-	for key := range p.msgChan {
-		delete(p.msgChan, key)
-	}
+	p.msgChan = make(map[int](chan *Response))
+	p.subscribes = make(map[int]func(*Response))
 	p.client.Close()
 }
