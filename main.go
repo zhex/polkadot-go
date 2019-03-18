@@ -10,11 +10,9 @@ import (
 func main() {
 	p := jsonrpc.NewWsProvider("wss://poc3-rpc.polkadot.io/")
 	params := make([]interface{}, 0)
-	err := p.Subscribe("chain_subscribeNewHead", params, func(r *jsonrpc.Response) {
-		fmt.Println(r.Params.Result)
-	})
+	resp, err := p.Call("state_getMetadata", params)
 	if err != nil {
 		log.Fatal(err)
 	}
-	select {}
+	fmt.Println(resp.Result)
 }

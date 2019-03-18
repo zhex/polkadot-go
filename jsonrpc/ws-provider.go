@@ -21,7 +21,7 @@ func NewWsProvider(endpoint string) *WsProvider {
 		endpoint:   endpoint,
 		id:         0,
 		msgChan:    make(map[int](chan *Response)),
-		subscribes: make(map[int][]func(*Response)),
+		subscribes: make(map[int]func(*Response)),
 		ctx:        ctx,
 		ctxCancel:  cancel,
 	}
@@ -45,10 +45,8 @@ func NewWsProvider(endpoint string) *WsProvider {
 					}
 				} else {
 					id := resp.Params.Subscription
-					if callbacks, ok := p.subscribes[id]; ok {
-						for _, callback := range callbacks {
-							callback(resp)
-						}
+					if callback, ok := p.subscribes[id]; ok {
+						callback(resp)
 					}
 				}
 			}
@@ -63,7 +61,7 @@ type WsProvider struct {
 	endpoint   string
 	id         int
 	msgChan    map[int](chan *Response)
-	subscribes map[int][]func(*Response)
+	subscribes map[int]func(*Response)
 	ctx        context.Context
 	ctxCancel  context.CancelFunc
 }
@@ -87,16 +85,23 @@ func (p *WsProvider) Call(method string, params []interface{}) (*Response, error
 	return resp, nil
 }
 
-func (p *WsProvider) Subscribe(method string, params []interface{}, callback func(*Response)) error {
+func (p *WsProvider) Subscribe(method string, params []interface{}, callback func(*Response)) (int, error) {
 	resp, err := p.Call(method, params)
+	if err != nil {
+		return -1, err
+	}
+	id := int(resp.Result.(float64))
+	p.subscribes[id] = callback
+	return id, nil
+}
+
+func (p *WsProvider) Unsubscribe(method string, id int) error {
+	resp, err := p.Call(method, []interface{}{id})
 	if err != nil {
 		return err
 	}
-	id := int(resp.Result.(float64))
-	if _, ok := p.subscribes[id]; ok {
-		p.subscribes[id] = append(p.subscribes[id], callback)
-	} else {
-		p.subscribes[id] = []func(*Response){callback}
+	if resp.Result.(bool) {
+		delete(p.subscribes, id)
 	}
 	return nil
 }
