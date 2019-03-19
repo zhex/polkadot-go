@@ -8,6 +8,32 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+func handleResponse(p *WsProvider) error {
+	resp := &Response{}
+	err := p.client.ReadJSON(resp)
+	if err != nil {
+		return err
+	}
+
+	if resp.Params.Result == nil {
+		if c, ok := p.msgChan[resp.ID]; ok {
+			c <- resp
+		}
+	} else {
+		id := resp.Params.Subscription
+		if callback, ok := p.subscribes[id]; ok {
+			if r, ok := p.waitingResponse[id]; ok {
+				callback(r)
+				delete(p.waitingResponse, id)
+			}
+			callback(resp)
+		} else {
+			p.waitingResponse[id] = resp
+		}
+	}
+	return nil
+}
+
 func NewWsProvider(endpoint string) *WsProvider {
 	client, _, err := websocket.DefaultDialer.Dial(endpoint, nil)
 	if err != nil {
@@ -17,13 +43,14 @@ func NewWsProvider(endpoint string) *WsProvider {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	p := &WsProvider{
-		client:     client,
-		endpoint:   endpoint,
-		id:         0,
-		msgChan:    make(map[int](chan *Response)),
-		subscribes: make(map[int]func(*Response)),
-		ctx:        ctx,
-		ctxCancel:  cancel,
+		client:          client,
+		endpoint:        endpoint,
+		id:              0,
+		msgChan:         make(map[int](chan *Response)),
+		subscribes:      make(map[int]func(*Response)),
+		waitingResponse: make(map[int]*Response),
+		ctx:             ctx,
+		ctxCancel:       cancel,
 	}
 
 	go func() {
@@ -32,22 +59,10 @@ func NewWsProvider(endpoint string) *WsProvider {
 			case <-p.ctx.Done():
 				return
 			default:
-				resp := &Response{}
-				err := client.ReadJSON(resp)
+				err := handleResponse(p)
 				if err != nil {
 					fmt.Println(err)
 					continue
-				}
-
-				if resp.Params.Result == nil {
-					if c, ok := p.msgChan[resp.ID]; ok {
-						c <- resp
-					}
-				} else {
-					id := resp.Params.Subscription
-					if callback, ok := p.subscribes[id]; ok {
-						callback(resp)
-					}
 				}
 			}
 		}
@@ -57,13 +72,14 @@ func NewWsProvider(endpoint string) *WsProvider {
 }
 
 type WsProvider struct {
-	client     *websocket.Conn
-	endpoint   string
-	id         int
-	msgChan    map[int](chan *Response)
-	subscribes map[int]func(*Response)
-	ctx        context.Context
-	ctxCancel  context.CancelFunc
+	client          *websocket.Conn
+	endpoint        string
+	id              int
+	msgChan         map[int](chan *Response)
+	subscribes      map[int]func(*Response)
+	waitingResponse map[int]*Response
+	ctx             context.Context
+	ctxCancel       context.CancelFunc
 }
 
 func (p *WsProvider) Call(method string, params []interface{}) (*Response, error) {
@@ -110,5 +126,6 @@ func (p *WsProvider) Close() {
 	p.ctxCancel()
 	p.msgChan = make(map[int](chan *Response))
 	p.subscribes = make(map[int]func(*Response))
+	p.waitingResponse = make(map[int]*Response)
 	p.client.Close()
 }
