@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/hex"
 	"fmt"
 	"log"
 	"strconv"
@@ -24,7 +23,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	data, err := hex.DecodeString(utils.StripHexPrefix(resp.Result.(string)))
+	data, err := utils.HexToBytes(resp.Result.(string))
 	if err != nil {
 		log.Fatal(err)
 	}
