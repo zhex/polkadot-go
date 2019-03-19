@@ -1,3 +1,3 @@
-package primitives
+package types
 
 type Text string

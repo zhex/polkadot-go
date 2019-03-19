@@ -3,7 +3,6 @@ package jsonrpc
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/gorilla/websocket"
 )
@@ -34,10 +33,10 @@ func handleResponse(p *WsProvider) error {
 	return nil
 }
 
-func NewWsProvider(endpoint string) *WsProvider {
+func NewWsProvider(endpoint string) (*WsProvider, error) {
 	client, _, err := websocket.DefaultDialer.Dial(endpoint, nil)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -68,7 +67,7 @@ func NewWsProvider(endpoint string) *WsProvider {
 		}
 	}()
 
-	return p
+	return p, nil
 }
 
 type WsProvider struct {

@@ -11,12 +11,12 @@ type rpc struct {
 	Author *author
 }
 
-type rpcCall struct {
+type rpcBase struct {
 	provider *jsonrpc.WsProvider
 	section  string
 }
 
-func (r *rpcCall) call(method string, params []interface{}) (interface{}, error) {
+func (r *rpcBase) call(method string, params []interface{}) (interface{}, error) {
 	resp, err := r.provider.Call(r.section+"_"+method, params)
 	return resp.Result, err
 }

@@ -14,8 +14,8 @@ func IntToBytes(n int) []byte {
 }
 
 func main() {
-	c := client.New("wss://poc3-rpc.polkadot.io/")
-	name, err := c.RPC.State.GetMetadata()
+	c, _ := client.New("wss://poc3-rpc.polkadot.io/")
+	name, err := c.RPC.System.Peers()
 	fmt.Println(name, err)
 	// params := make([]interface{}, 0)
 	// resp, err := p.Call("state_getMetadata", params)

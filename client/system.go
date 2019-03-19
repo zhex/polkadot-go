@@ -14,7 +14,7 @@ func createSystem(p *jsonrpc.WsProvider) *system {
 }
 
 type system struct {
-	rpcCall
+	rpcBase
 }
 
 func (s *system) Name() (string, error) {

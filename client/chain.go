@@ -10,5 +10,5 @@ func createChain(p *jsonrpc.WsProvider) *chain {
 }
 
 type chain struct {
-	rpcCall
+	rpcBase
 }

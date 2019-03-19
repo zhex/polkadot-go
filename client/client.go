@@ -2,18 +2,17 @@ package client
 
 import "github.com/zhex/polkadot-go/jsonrpc"
 
-// examplge:
-// chain := c.RPC.System.Chain()
-// name := c.RPC.System.Name()
-
 type Client struct {
 	provider *jsonrpc.WsProvider
 	RPC      *rpc
 }
 
-func New(url string) *Client {
-	p := jsonrpc.NewWsProvider(url)
-	return &Client{
+func New(url string) (*Client, error) {
+	p, err := jsonrpc.NewWsProvider(url)
+	if err != nil {
+		return nil, err
+	}
+	c := &Client{
 		provider: p,
 		RPC: &rpc{
 			System: createSystem(p),
@@ -22,4 +21,5 @@ func New(url string) *Client {
 			Chain:  createChain(p),
 		},
 	}
+	return c, nil
 }

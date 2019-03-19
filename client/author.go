@@ -10,5 +10,5 @@ func createAuthor(p *jsonrpc.WsProvider) *author {
 }
 
 type author struct {
-	rpcCall
+	rpcBase
 }
