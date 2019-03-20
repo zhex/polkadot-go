@@ -7,6 +7,7 @@ type Client struct {
 	RPC      *rpc
 }
 
+// New client
 func New(url string) (*Client, error) {
 	p, err := jsonrpc.NewWsProvider(url)
 	if err != nil {

@@ -54,6 +54,12 @@ func (s *system) NetworkState() (interface{}, error) {
 	return result, err
 }
 
-// func (s *system) Properties() ([]string, error) {
-// 	// todo
-// }
+func (s *system) Properties() (*types.ChainProperties, error) {
+	result, err := s.call("properties", emptyParams)
+	if err != nil {
+		return nil, err
+	}
+	properties := types.ChainProperties{}
+	err = mapstructure.Decode(result, &properties)
+	return &properties, err
+}
