@@ -7,19 +7,18 @@ import (
 )
 
 func TestDecodeBytes(t *testing.T) {
-	offset, l := DecodeBytes([]byte{252})
-	assert.Equal(t, uint64(1), offset)
-	assert.Equal(t, uint64(63), l)
+	data := []struct {
+		input  []byte
+		expect []uint64
+	}{
+		{[]byte{252}, []uint64{1, 63}},
+		{[]byte{253, 7}, []uint64{2, 511}},
+		{[]byte{254, 255, 3, 0}, []uint64{4, 0xffff}},
+		{[]byte{3, 249, 255, 255, 255}, []uint64{5, 0xfffffff9}},
+	}
 
-	offset, l = DecodeBytes([]byte{253, 7})
-	assert.Equal(t, uint64(2), offset)
-	assert.Equal(t, uint64(511), l)
-
-	offset, l = DecodeBytes([]byte{254, 255, 3, 0})
-	assert.Equal(t, uint64(4), offset)
-	assert.Equal(t, uint64(0xffff), l)
-
-	offset, l = DecodeBytes([]byte{3, 249, 255, 255, 255})
-	assert.Equal(t, uint64(5), offset)
-	assert.Equal(t, uint64(0xfffffff9), l)
+	for _, d := range data {
+		offset, l := DecodeBytes(d.input)
+		assert.Equal(t, d.expect, []uint64{offset, l})
+	}
 }
