@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/binary"
+	"encoding/hex"
 )
 
 func DecodeBytes(data []byte) (uint64, uint64) {
@@ -37,4 +38,9 @@ func FixByteWidth(b []byte, w int, suffix bool) []byte {
 		}
 	}
 	return bb
+}
+
+func BytesToHex(data []byte) string {
+	s := hex.EncodeToString(data)
+	return HexAddPrefix(s)
 }

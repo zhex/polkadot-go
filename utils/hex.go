@@ -19,11 +19,11 @@ func IsHex(data string) bool {
 }
 
 func HexToBytes(data string) ([]byte, error) {
-	data = StripHexPrefix(data)
+	data = HexStripPrefix(data)
 	return hex.DecodeString(data)
 }
 
-func StripHexPrefix(data string) string {
+func HexStripPrefix(data string) string {
 	return strings.TrimPrefix(data, HexPrefix)
 }
 
@@ -32,4 +32,11 @@ func HexHasPrefix(data string) bool {
 		return false
 	}
 	return data[:2] == HexPrefix
+}
+
+func HexAddPrefix(data string) string {
+	if data[:2] == HexPrefix {
+		return data
+	}
+	return HexPrefix + data
 }
