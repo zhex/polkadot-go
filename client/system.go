@@ -1,9 +1,9 @@
 package client
 
 import (
-	"github.com/mitchellh/mapstructure"
 	"github.com/zhex/polkadot-go/jsonrpc"
-	"github.com/zhex/polkadot-go/types"
+	"github.com/zhex/polkadot-go/types/rpccall"
+	"github.com/zhex/polkadot-go/utils/decoder"
 )
 
 func createSystem(p *jsonrpc.WsProvider) *system {
@@ -32,20 +32,20 @@ func (s *system) Chain() (string, error) {
 	return result.(string), err
 }
 
-func (s *system) Health() (*types.Health, error) {
+func (s *system) Health() (*rpccall.Health, error) {
 	result, err := s.call("health", emptyParams)
 	if err != nil {
 		return nil, err
 	}
-	health := types.Health{}
-	err = mapstructure.Decode(result, &health)
+	health := rpccall.Health{}
+	err = decoder.MapDecode(result, &health)
 	return &health, err
 }
 
-func (s *system) Peers() ([]types.PeerInfo, error) {
+func (s *system) Peers() ([]rpccall.PeerInfo, error) {
 	result, err := s.call("peers", emptyParams)
-	var peers []types.PeerInfo
-	err = mapstructure.Decode(result, &peers)
+	var peers []rpccall.PeerInfo
+	err = decoder.MapDecode(result, &peers)
 	return peers, err
 }
 
@@ -54,12 +54,12 @@ func (s *system) NetworkState() (interface{}, error) {
 	return result, err
 }
 
-func (s *system) Properties() (*types.ChainProperties, error) {
+func (s *system) Properties() (*rpccall.ChainProperties, error) {
 	result, err := s.call("properties", emptyParams)
 	if err != nil {
 		return nil, err
 	}
-	properties := types.ChainProperties{}
-	err = mapstructure.Decode(result, &properties)
+	properties := rpccall.ChainProperties{}
+	err = decoder.MapDecode(result, &properties)
 	return &properties, err
 }

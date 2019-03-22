@@ -1,6 +1,8 @@
 package client
 
-import "github.com/zhex/polkadot-go/jsonrpc"
+import (
+	"github.com/zhex/polkadot-go/jsonrpc"
+)
 
 type Client struct {
 	provider *jsonrpc.WsProvider

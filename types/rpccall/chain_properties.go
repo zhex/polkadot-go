@@ -1,4 +1,4 @@
-package types
+package rpccall
 
 type ChainProperties struct {
 	TokenDecimals int

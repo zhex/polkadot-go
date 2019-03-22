@@ -1,4 +1,4 @@
-package types
+package rpccall
 
 type PeerInfo struct {
 	BestHash        string
