@@ -5,7 +5,7 @@ type Codec interface {
 	Hex() string
 	Bytes() []byte
 	String() string
-	Equal(b Codec) bool
+	Equal(b interface{}) bool
 	Empty() bool
 }
 

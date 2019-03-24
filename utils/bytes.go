@@ -3,23 +3,12 @@ package utils
 import (
 	"encoding/binary"
 	"encoding/hex"
+	"math"
 )
 
-func DecodeBytes(data []byte) (uint64, uint64) {
-	flag := data[0] & 0x03
-	if flag == 0x00 {
-		return 1, uint64(data[0] >> 2)
-	} else if flag == 0x01 {
-		d := FixByteWidth(data[:2], 8, true)
-		return 2, binary.LittleEndian.Uint64(d) >> 2
-	} else if flag == 0x02 {
-		d := FixByteWidth(data[:4], 8, true)
-		return 4, binary.LittleEndian.Uint64(d) >> 2
-	}
-	l := uint64(data[0]>>2) + 4
-	offset := l + 1
-	d := FixByteWidth(data[1:offset], 8, true)
-	return offset, binary.LittleEndian.Uint64(d)
+func AddBytePrefix(data []byte, l int) []byte {
+	b := IntToByte(l)
+	return append(b, data...)
 }
 
 func FixByteWidth(b []byte, w int, suffix bool) []byte {
@@ -43,4 +32,44 @@ func FixByteWidth(b []byte, w int, suffix bool) []byte {
 func BytesToHex(data []byte) string {
 	s := hex.EncodeToString(data)
 	return HexAddPrefix(s)
+}
+
+func Uint8ToByte(data uint8) []byte {
+	return []byte{data}
+}
+
+func Uint16ToByte(data uint16) []byte {
+	b := make([]byte, 2)
+	binary.LittleEndian.PutUint16(b, data)
+	return b
+}
+
+func Uint32ToByte(data uint32) []byte {
+	b := make([]byte, 4)
+	binary.LittleEndian.PutUint32(b, data)
+	return b
+}
+
+func Uint64ToByte(data uint64) []byte {
+	b := make([]byte, 8)
+	binary.LittleEndian.PutUint64(b, data)
+	return b
+}
+
+func IntToByte(d int) []byte {
+	if d <= math.MaxUint8 {
+		return Uint8ToByte(uint8(d))
+	} else if d <= math.MaxUint16 {
+		return Uint16ToByte(uint16(d))
+	} else if d <= math.MaxUint32 {
+		return Uint32ToByte(uint32(d))
+	}
+	return Uint64ToByte(uint64(d))
+}
+
+func BooltoByte(data bool) []byte {
+	if data {
+		return []byte{1}
+	}
+	return []byte{0}
 }
