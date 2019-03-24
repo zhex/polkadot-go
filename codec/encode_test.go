@@ -11,14 +11,14 @@ func TestEncode(t *testing.T) {
 		input  interface{}
 		expect []byte
 	}{
-		{"hello", []byte{0x5, 0x68, 0x65, 0x6c, 0x6c, 0x6f}},
+		{"hello", []byte{0x14, 0x68, 0x65, 0x6c, 0x6c, 0x6f}},
 		{true, []byte{1}},
 		{false, []byte{0}},
 		{uint8(math.MaxUint8), []byte{255}},
 		{uint16(math.MaxUint16), []byte{255, 255}},
 		{uint32(math.MaxUint32), []byte{255, 255, 255, 255}},
 		{uint64(math.MaxUint64), []byte{255, 255, 255, 255, 255, 255, 255, 255}},
-		{[]uint16{math.MaxUint16, math.MaxUint16}, []byte{2, 255, 255, 255, 255}},
+		{[]uint16{math.MaxUint16, math.MaxUint16}, []byte{8, 255, 255, 255, 255}},
 		{Enum(255), []byte{255}},
 		{
 			struct {
@@ -28,7 +28,7 @@ func TestEncode(t *testing.T) {
 				Name: "zhex",
 				Age:  38,
 			},
-			[]byte{0x6, 0x4, 0x7a, 0x68, 0x65, 0x78, 0x26},
+			[]byte{0x18, 0x10, 0x7a, 0x68, 0x65, 0x78, 0x26},
 		},
 	}
 	for _, d := range data {

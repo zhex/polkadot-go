@@ -2,7 +2,7 @@ package codec
 
 import "reflect"
 
-type TypeEncoder = func(interface{}) []byte
+type TypeEncoder = func(interface{}) ([]byte, error)
 type TypeDecoder = func([]byte, reflect.Value) (interface{}, error)
 
 var encodeMap = map[string]TypeEncoder{}
@@ -15,4 +15,5 @@ func RegisterType(name string, encoder TypeEncoder, decoder TypeDecoder) {
 
 func init() {
 	RegisterType("EnumType", EncodeEnumType, DecodeEnumType)
+	RegisterType("Option", EncodeOption, DecodeOption)
 }

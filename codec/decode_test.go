@@ -28,7 +28,7 @@ func TestGetBytesInfo(t *testing.T) {
 	}
 
 	for _, d := range data {
-		offset, l := GetBytesInfo(d.input)
-		assert.Equal(t, d.expect, []uint64{offset, l})
+		info := GetBytesInfo(d.input)
+		assert.Equal(t, d.expect, []uint64{info.Offset, info.Len})
 	}
 }

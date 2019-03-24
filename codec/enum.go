@@ -18,10 +18,13 @@ type EnumTypeDecoded struct {
 	Value interface{}
 }
 
-func EncodeEnumType(e interface{}) []byte {
+func EncodeEnumType(e interface{}) ([]byte, error) {
 	et := e.(EnumType)
-	sub, _ := Encode(et.Type())
-	return append([]byte{uint8(et.Enum)}, sub...)
+	sub, err := Encode(et.Type())
+	if err != nil {
+		return nil, err
+	}
+	return append([]byte{uint8(et.Enum)}, sub...), nil
 }
 
 func DecodeEnumType(b []byte, target reflect.Value) (interface{}, error) {
@@ -29,7 +32,7 @@ func DecodeEnumType(b []byte, target reflect.Value) (interface{}, error) {
 	et.Enum = Enum(b[0])
 	t := et.Type()
 
-	err := Decode(t, b[1:])
+	_, err := Decode(b[1:], t)
 	if err != nil {
 		return nil, err
 	}

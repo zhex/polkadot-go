@@ -8,9 +8,3 @@ type Codec interface {
 	Equal(b interface{}) bool
 	Empty() bool
 }
-
-type StructBuilder interface {
-	BuildStruct() Codec
-	Decode([]byte) Codec
-	Encode(Codec) []byte
-}

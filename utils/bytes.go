@@ -4,12 +4,7 @@ import (
 	"encoding/hex"
 )
 
-func AddBytePrefix(data []byte, l int) []byte {
-	b := UintToByte(uint64(l))
-	return append(b, data...)
-}
-
-func FixByteWidth(b []byte, w int, suffix bool) []byte {
+func BytePad(b []byte, w int, suffix bool) []byte {
 	l := len(b)
 	if l >= w {
 		return b
@@ -30,11 +25,4 @@ func FixByteWidth(b []byte, w int, suffix bool) []byte {
 func ByteToHex(data []byte) string {
 	s := hex.EncodeToString(data)
 	return HexAddPrefix(s)
-}
-
-func BoolToByte(data bool) []byte {
-	if data {
-		return []byte{1}
-	}
-	return []byte{0}
 }

@@ -1,0 +1,56 @@
+package codec
+
+import (
+	"encoding/binary"
+	"github.com/zhex/polkadot-go/utils"
+	"math"
+)
+
+func AddLengthPrefix(data []byte, l int) []byte {
+	if l <= math.MaxUint8 {
+		l = l << 2
+	} else if l <= math.MaxUint16 {
+		l = l<<2 + 0x01
+	} else if l <= math.MaxUint32 {
+		l = l<<2 + 0x02
+	}
+	b := utils.UintToByte(uint64(l))
+	return append(b, data...)
+}
+
+type ByteInfo struct {
+	Offset uint64
+	Len    uint64
+}
+
+func (b *ByteInfo) End() uint64 {
+	return b.Offset + b.Len
+}
+
+func GetBytesInfo(data []byte) *ByteInfo {
+	var offset, l uint64
+
+	flag := data[0] & 0x03
+	switch flag {
+	case 0x00:
+		offset = 1
+		l = uint64(data[0] >> 2)
+	case 0x01:
+		d := utils.BytePad(data[:2], 8, true)
+		offset = 2
+		l = binary.LittleEndian.Uint64(d) >> 2
+	case 0x02:
+		d := utils.BytePad(data[:4], 8, true)
+		offset = 4
+		l = binary.LittleEndian.Uint64(d) >> 2
+	default:
+		offset = uint64(data[0]>>2) + 4 + 1
+		d := utils.BytePad(data[1:offset], 8, true)
+		l = binary.LittleEndian.Uint64(d)
+	}
+
+	return &ByteInfo{
+		Offset: offset,
+		Len:    l,
+	}
+}
