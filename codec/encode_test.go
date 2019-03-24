@@ -19,13 +19,15 @@ func TestEncode(t *testing.T) {
 		{uint32(math.MaxUint32), []byte{255, 255, 255, 255}},
 		{uint64(math.MaxUint64), []byte{255, 255, 255, 255, 255, 255, 255, 255}},
 		{[]uint16{math.MaxUint16, math.MaxUint16}, []byte{2, 255, 255, 255, 255}},
-		{struct {
-			Name string
-			Age  uint8
-		}{
-			Name: "zhex",
-			Age:  38,
-		},
+		{Enum(255), []byte{255}},
+		{
+			struct {
+				Name string
+				Age  uint8
+			}{
+				Name: "zhex",
+				Age:  38,
+			},
 			[]byte{0x6, 0x4, 0x7a, 0x68, 0x65, 0x78, 0x26},
 		},
 	}

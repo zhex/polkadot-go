@@ -1,6 +1,7 @@
 package client
 
 import (
+	"fmt"
 	"github.com/zhex/polkadot-go/jsonrpc"
 	"github.com/zhex/polkadot-go/utils"
 )
@@ -25,5 +26,20 @@ func (s *state) GetMetadata() (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+	//1635018093
+	data = data[4:] // strip magic number
+	data = data[1:] // strip enum idx
+	offset, l := utils.DecodeBytes(data)
+	fmt.Println(offset)
+	data = data[offset:] // strip vector prefix
+
+	offset, l = utils.DecodeBytes(data)
+	fmt.Println(offset, l, string(data[offset:offset+l]))
+	data = data[l+offset:] // strip m[0].name
+
+	offset, l = utils.DecodeBytes(data)
+	fmt.Println(offset, l, string(data[offset:offset+l]))
+
+	//offset, length := utils.DecodeBytes(data)
 	return string(data), nil
 }
