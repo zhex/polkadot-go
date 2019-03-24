@@ -45,8 +45,9 @@ func decodeBool(b []byte, val reflect.Value) (*ByteInfo, error) {
 }
 
 func decodeSlice(b []byte, val reflect.Value) (*ByteInfo, error) {
-	l := int(b[0])
-	b = b[1:]
+	info := GetBytesInfo(b)
+	b = b[info.Offset:]
+	l := int(info.Len)
 	valSlice := reflect.MakeSlice(val.Type(), l, l)
 	for i := 0; i < l; i++ {
 		v := valSlice.Index(i)
