@@ -32,7 +32,7 @@ func DecodeEnumType(b []byte, target reflect.Value) (interface{}, error) {
 	et.Enum = Enum(b[0])
 	t := et.Type()
 
-	_, err := Decode(b[1:], t)
+	_, err := Decode(b[1:], &t)
 	if err != nil {
 		return nil, err
 	}
