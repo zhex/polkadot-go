@@ -3,6 +3,7 @@ package client
 import (
 	"github.com/zhex/polkadot-go/jsonrpc"
 	"github.com/zhex/polkadot-go/types/primitives"
+	"github.com/zhex/polkadot-go/types/rpccall"
 	"github.com/zhex/polkadot-go/types/type"
 	"github.com/zhex/polkadot-go/utils/decoder"
 )
@@ -48,8 +49,14 @@ func (c *chain) GetHeader() {
 	// todo
 }
 
-func (c *chain) GetRuntimeVersion() {
-	// todo
+func (c *chain) GetRuntimeVersion() (*rpccall.RuntimeVersion, error) {
+	result, err := c.call("getRuntimeVersion", emptyParams)
+	if err != nil {
+		return nil, err
+	}
+	var v rpccall.RuntimeVersion
+	err = decoder.MapDecode(result, &v)
+	return &v, nil
 }
 
 func (c *chain) SubscribeFinalisedHeads() {
