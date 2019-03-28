@@ -74,7 +74,7 @@ type WsProvider struct {
 	client          *websocket.Conn
 	endpoint        string
 	id              int
-	msgChan         map[int](chan *Response)
+	msgChan         map[int]chan *Response
 	subscribes      map[int]func(*Response)
 	waitingResponse map[int]*Response
 	ctx             context.Context
@@ -123,7 +123,7 @@ func (p *WsProvider) Unsubscribe(method string, id int) error {
 
 func (p *WsProvider) Close() {
 	p.ctxCancel()
-	p.msgChan = make(map[int](chan *Response))
+	p.msgChan = make(map[int]chan *Response)
 	p.subscribes = make(map[int]func(*Response))
 	p.waitingResponse = make(map[int]*Response)
 	p.client.Close()

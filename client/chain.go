@@ -33,3 +33,33 @@ func (c *chain) GetBlock(hash *primitives.Hash256) (*_type.SignedBlock, error) {
 	err = decoder.MapDecode(result, &signedBlock)
 	return &signedBlock, err
 }
+
+func (c *chain) GetBlockHash(n uint64) (*primitives.Hash256, error) {
+	// todo
+	return nil, nil
+}
+
+func (c *chain) GetFinalisedHead() (*primitives.Hash256, error) {
+	// todo
+	return nil, nil
+}
+
+func (c *chain) GetHeader() {
+	// todo
+}
+
+func (c *chain) GetRuntimeVersion() {
+	// todo
+}
+
+func (c *chain) SubscribeFinalisedHeads() {
+	// todo
+}
+
+func (c *chain) SubscribeNewHead() {
+	// todo
+}
+
+func (c *chain) SubscribeRuntimeVersion() {
+	// todo
+}

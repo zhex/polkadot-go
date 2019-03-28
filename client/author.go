@@ -1,6 +1,9 @@
 package client
 
-import "github.com/zhex/polkadot-go/jsonrpc"
+import (
+	"github.com/zhex/polkadot-go/jsonrpc"
+	"github.com/zhex/polkadot-go/types/type"
+)
 
 func createAuthor(p *jsonrpc.WsProvider) *author {
 	a := author{}
@@ -11,4 +14,16 @@ func createAuthor(p *jsonrpc.WsProvider) *author {
 
 type author struct {
 	rpcBase
+}
+
+func (a *author) PendingExtrinsics() {
+	// todo
+}
+
+func (a *author) SubmitAndWatchExtrinsic(ex _type.Extrinsic) {
+	// todo
+}
+
+func (a *author) SubmitExtrinsic(ex _type.Extrinsic) {
+	// todo
 }

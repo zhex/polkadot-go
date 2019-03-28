@@ -2,7 +2,7 @@ package client
 
 import "github.com/zhex/polkadot-go/jsonrpc"
 
-var emptyParams = []interface{}{}
+var emptyParams []interface{}
 
 type rpc struct {
 	System *system

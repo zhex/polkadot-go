@@ -2,7 +2,9 @@ package client
 
 import (
 	"github.com/zhex/polkadot-go/jsonrpc"
+	"github.com/zhex/polkadot-go/types/rpccall"
 	"github.com/zhex/polkadot-go/utils"
+	"github.com/zhex/polkadot-go/utils/decoder"
 )
 
 func createState(p *jsonrpc.WsProvider) *state {
@@ -25,20 +27,40 @@ func (s *state) GetMetadata() (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	//1635018093
-	//data = data[4:] // strip magic number
-	//data = data[1:] // strip enum idx
-	//offset, l := utils.DecodeBytes(data)
-	//fmt.Println(offset)
-	//data = data[offset:] // strip vector prefix
-	//
-	//offset, l = utils.DecodeBytes(data)
-	//fmt.Println(offset, l, string(data[offset:offset+l]))
-	//data = data[l+offset:] // strip m[0].name
-	//
-	//offset, l = utils.DecodeBytes(data)
-	//fmt.Println(offset, l, string(data[offset:offset+l]))
-	//
-	////offset, length := utils.DecodeBytes(data)
 	return string(data), nil
+}
+
+func (s *state) GetRuntimeVersion() (*rpccall.RuntimeVersion, error) {
+	result, err := s.call("getRuntimeVersion", emptyParams)
+	if err != nil {
+		return nil, err
+	}
+	var v rpccall.RuntimeVersion
+	err = decoder.MapDecode(result, &v)
+	return &v, nil
+}
+
+func (s *state) GetStorage() (interface{}, error) {
+	// todo
+	return nil, nil
+}
+
+func (s *state) GetStorageHash() (interface{}, error) {
+	// todo
+	return nil, nil
+}
+
+func (s *state) GetStorageSize() (interface{}, error) {
+	// todo
+	return nil, nil
+}
+
+func (s *state) QueryStorage() (interface{}, error) {
+	// todo
+	return nil, nil
+}
+
+func (s *state) SubscribeStorage() (interface{}, error) {
+	// todo
+	return nil, nil
 }
