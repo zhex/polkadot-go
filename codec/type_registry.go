@@ -1,7 +1,6 @@
 package codec
 
 import (
-	"github.com/zhex/polkadot-go/types/type"
 	"reflect"
 )
 
@@ -19,5 +18,5 @@ func RegisterType(name string, encoder TypeEncoder, decoder TypeDecoder) {
 func init() {
 	RegisterType("EnumType", EncodeEnumType, DecodeEnumType)
 	RegisterType("Option", EncodeOption, DecodeOption)
-	RegisterType("Extrinsic", _type.EncodeExtrinsic, _type.DecodeExtrinsic)
+	//RegisterType("Extrinsic", _type.EncodeExtrinsic, _type.DecodeExtrinsic)
 }
