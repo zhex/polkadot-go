@@ -13,11 +13,11 @@ func Encode(data interface{}) ([]byte, error) {
 	switch t.Kind() {
 	case reflect.String:
 		b := []byte(val.String())
-		return AddLengthPrefix(b, len(b)), nil
+		return AddLengthPrefix(b), nil
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return utils.IntToByte(val.Int()), nil
+		return utils.IntToFixedByte(val.Int(), uint(t.Size())), nil
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return utils.UintToByte(val.Uint()), nil
+		return utils.UintToFixedByte(val.Uint(), uint(t.Size())), nil
 	case reflect.Bool:
 		return encodeBool(val)
 	case reflect.Slice:
@@ -38,7 +38,7 @@ func encodeSlice(val reflect.Value) ([]byte, error) {
 		}
 		b = append(b, d...)
 	}
-	return AddLengthPrefix(b, val.Len()), nil
+	return AddLengthPrefix(b), nil
 }
 
 func encodeStruct(val reflect.Value) ([]byte, error) {
@@ -57,7 +57,7 @@ func encodeStruct(val reflect.Value) ([]byte, error) {
 		}
 		b = append(b, d...)
 	}
-	return AddLengthPrefix(b, len(b)), nil
+	return AddLengthPrefix(b), nil
 }
 
 func encodeBool(val reflect.Value) ([]byte, error) {

@@ -6,16 +6,28 @@ import (
 	"math"
 )
 
-func AddLengthPrefix(data []byte, l int) []byte {
+func AddLengthPrefix(data []byte) []byte {
+	l := len(data)
+	var prefix []byte
 	if l <= math.MaxUint8 {
-		l = l << 2
+		prefix = []byte{uint8(l << 2)}
 	} else if l <= math.MaxUint16 {
-		l = l<<2 + 0x01
+		prefix = utils.UintToFixedByte(uint64(l<<2+0x01), 16)
 	} else if l <= math.MaxUint32 {
-		l = l<<2 + 0x02
+		prefix = utils.UintToFixedByte(uint64(l<<2+0x02), 32)
+	} else {
+		prefix := utils.UintToByte(uint64(l))
+		bSize := len(prefix)
+		for i := len(prefix); i > 0; i++ {
+			if prefix[i] == 0 {
+				bSize = i
+			} else {
+				break
+			}
+		}
+		prefix = []byte{uint8((bSize-4)<<2 + 2), uint8(bSize)}
 	}
-	b := utils.UintToByte(uint64(l))
-	return append(b, data...)
+	return append(prefix, data...)
 }
 
 type ByteInfo struct {

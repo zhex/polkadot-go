@@ -8,11 +8,14 @@ import (
 
 func Decode(data []byte, s interface{}) (*ByteInfo, error) {
 	val := reflect.Indirect(reflect.ValueOf(s))
-	t := val.Type()
 	// if out source is a reflect.Value reference, use it directly
-	if t.PkgPath() == "reflect" && t.Name() == "Value" {
+	if val.Type().String() == "reflect.Value" {
 		val = *(s.(*reflect.Value))
+		if val.Kind() == reflect.Ptr {
+			val = val.Elem()
+		}
 	}
+
 	switch val.Kind() {
 	case reflect.String:
 		return decodeString(data, val)
