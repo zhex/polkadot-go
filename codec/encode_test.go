@@ -18,7 +18,7 @@ func TestEncode(t *testing.T) {
 		{uint16(math.MaxUint16), []byte{255, 255}},
 		{uint32(math.MaxUint32), []byte{255, 255, 255, 255}},
 		{uint64(math.MaxUint64), []byte{255, 255, 255, 255, 255, 255, 255, 255}},
-		{[]uint16{math.MaxUint16, math.MaxUint16}, []byte{8, 255, 255, 255, 255}},
+		{[]uint16{math.MaxUint16, math.MaxUint16}, []byte{0x10, 255, 255, 255, 255}},
 		{Enum(255), []byte{255}},
 		{
 			struct {

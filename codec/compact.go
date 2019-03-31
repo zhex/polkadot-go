@@ -12,9 +12,9 @@ func AddLengthPrefix(data []byte) []byte {
 	if l <= math.MaxUint8 {
 		prefix = []byte{uint8(l << 2)}
 	} else if l <= math.MaxUint16 {
-		prefix = utils.UintToFixedByte(uint64(l<<2+0x01), 16)
+		prefix = utils.UintToFixedByte(uint64(l<<2+0x01), 2)
 	} else if l <= math.MaxUint32 {
-		prefix = utils.UintToFixedByte(uint64(l<<2+0x02), 32)
+		prefix = utils.UintToFixedByte(uint64(l<<2+0x02), 4)
 	} else {
 		prefix := utils.UintToByte(uint64(l))
 		bSize := len(prefix)
