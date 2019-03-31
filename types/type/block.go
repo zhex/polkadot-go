@@ -10,10 +10,11 @@ type Block struct {
 }
 
 type BlockHeader struct {
+	ParentHash     primitives.Hash256
 	Number         uint64
 	StateRoot      primitives.Hash256
 	ExtrinsicsRoot primitives.Hash256
-	ParentHash     primitives.Hash256
+	Digest         Digest
 }
 
 type SignedBlock struct {

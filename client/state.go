@@ -19,7 +19,7 @@ type state struct {
 }
 
 func (s *state) GetMetadata() (interface{}, error) {
-	result, err := s.call("getMetadata", emptyParams)
+	result, err := s.call("getMetadata", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func (s *state) GetMetadata() (interface{}, error) {
 }
 
 func (s *state) GetRuntimeVersion() (*rpccall.RuntimeVersion, error) {
-	result, err := s.call("getRuntimeVersion", emptyParams)
+	result, err := s.call("getRuntimeVersion", nil)
 	if err != nil {
 		return nil, err
 	}

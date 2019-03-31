@@ -19,7 +19,7 @@ type author struct {
 }
 
 func (a *author) PendingExtrinsics() ([]_type.Extrinsic, error) {
-	result, err := a.call("pendingExtrinsics", emptyParams)
+	result, err := a.call("pendingExtrinsics", nil)
 	if err != nil {
 		return nil, err
 	}
