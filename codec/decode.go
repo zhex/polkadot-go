@@ -11,9 +11,6 @@ func Decode(data []byte, s interface{}) (*ByteInfo, error) {
 	// if out source is a reflect.Value reference, use it directly
 	if val.Type().String() == "reflect.Value" {
 		val = *(s.(*reflect.Value))
-		if val.Kind() == reflect.Ptr {
-			val = val.Elem()
-		}
 	}
 
 	switch val.Kind() {
@@ -29,6 +26,11 @@ func Decode(data []byte, s interface{}) (*ByteInfo, error) {
 		return decodeSlice(data, val)
 	case reflect.Struct:
 		return decodeStruct(data, val)
+	case reflect.Interface:
+		return decodeInterface(data, val)
+	case reflect.Ptr:
+		val = val.Elem()
+		return Decode(data, &val)
 	}
 	return nil, errors.New("can not decode with type " + val.Kind().String())
 }
@@ -93,6 +95,12 @@ func decodeSlice(b []byte, val reflect.Value) (*ByteInfo, error) {
 }
 
 func decodeStruct(b []byte, val reflect.Value) (*ByteInfo, error) {
+	t := val.Type()
+	name := t.Name()
+	if decoder, ok := decodeMap[name]; ok {
+		return decoder(b, val)
+	}
+
 	info := GetBytesInfo(b)
 	b = b[info.Offset:]
 	for i := 0; i < val.Type().NumField(); i++ {
@@ -104,4 +112,14 @@ func decodeStruct(b []byte, val reflect.Value) (*ByteInfo, error) {
 		b = b[subInfo.End():]
 	}
 	return info, nil
+}
+
+func decodeInterface(b []byte, val reflect.Value) (*ByteInfo, error) {
+	newVal := reflect.New(val.Elem().Type()).Elem()
+	offset, err := Decode(b, &newVal)
+	if err != nil {
+		return nil, err
+	}
+	val.Set(newVal)
+	return offset, nil
 }

@@ -5,7 +5,7 @@ import (
 )
 
 type TypeEncoder = func(interface{}) ([]byte, error)
-type TypeDecoder = func([]byte, reflect.Value) (interface{}, error)
+type TypeDecoder = func([]byte, reflect.Value) (*ByteInfo, error)
 
 var encodeMap = map[string]TypeEncoder{}
 var decodeMap = map[string]TypeDecoder{}
@@ -18,5 +18,5 @@ func RegisterType(name string, encoder TypeEncoder, decoder TypeDecoder) {
 func init() {
 	RegisterType("EnumType", EncodeEnumType, DecodeEnumType)
 	RegisterType("Option", EncodeOption, DecodeOption)
-	//RegisterType("Extrinsic", _type.EncodeExtrinsic, _type.DecodeExtrinsic)
+
 }

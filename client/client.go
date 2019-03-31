@@ -1,8 +1,14 @@
 package client
 
 import (
+	"github.com/zhex/polkadot-go/codec"
 	"github.com/zhex/polkadot-go/jsonrpc"
+	"github.com/zhex/polkadot-go/types/type"
 )
+
+func init() {
+	codec.RegisterType("Extrinsic", _type.EncodeExtrinsic, _type.DecodeExtrinsic)
+}
 
 type Client struct {
 	provider *jsonrpc.WsProvider

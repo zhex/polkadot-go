@@ -2,9 +2,13 @@ package metadata
 
 import "github.com/zhex/polkadot-go/codec"
 
-type Metadata struct {
+type Versioned struct {
 	MagicNumber uint32
 	Metadata    codec.EnumType
+}
+
+func (v *Versioned) Version() uint8 {
+	return v.Metadata.Index
 }
 
 type PlainType struct {
@@ -22,4 +26,12 @@ type DoubleMapType struct {
 	Key2      string
 	Value     string
 	KeyHasher string
+}
+
+func CreateMetadata() Versioned {
+	return Versioned{
+		Metadata: codec.EnumType{
+			Def: []interface{}{},
+		},
+	}
 }

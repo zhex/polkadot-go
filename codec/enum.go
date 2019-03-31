@@ -1,16 +1,18 @@
 package codec
 
-import "reflect"
+import (
+	"reflect"
+)
 
 type Enum uint8
 
 type EnumType struct {
-	Enum
-	Def []interface{}
+	Index uint8
+	Def   []interface{}
 }
 
 func (e *EnumType) Type() interface{} {
-	return e.Def[e.Enum]
+	return e.Def[e.Index]
 }
 
 func EncodeEnumType(e interface{}) ([]byte, error) {
@@ -19,14 +21,16 @@ func EncodeEnumType(e interface{}) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return append([]byte{uint8(et.Enum)}, sub...), nil
+	return append([]byte{uint8(et.Index)}, sub...), nil
 }
 
-func DecodeEnumType(b []byte, target reflect.Value) (interface{}, error) {
-	et := target.Interface().(EnumType)
-	et.Enum = Enum(b[0])
-	t := et.Type()
+func DecodeEnumType(b []byte, target reflect.Value) (*ByteInfo, error) {
+	fIdx := target.FieldByName("Index")
+	fIdx.SetUint(uint64(b[0]))
+
+	fDef := target.FieldByName("Def")
+	t := fDef.Index(int(b[0]))
 
 	_, err := Decode(b[1:], &t)
-	return et, err
+	return nil, err
 }

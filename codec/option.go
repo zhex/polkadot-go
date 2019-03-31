@@ -1,6 +1,8 @@
 package codec
 
-import "reflect"
+import (
+	"reflect"
+)
 
 type Option struct {
 	Value interface{}
@@ -22,13 +24,17 @@ func EncodeOption(data interface{}) ([]byte, error) {
 	return append([]byte{1}, sub...), nil
 }
 
-func DecodeOption(b []byte, target reflect.Value) (interface{}, error) {
+func DecodeOption(b []byte, target reflect.Value) (*ByteInfo, error) {
 	if b[0] == 0 {
-		return Option{Value: nil}, nil
+		v := reflect.ValueOf(Option{Value: nil})
+		target.Set(v)
+		return &ByteInfo{Offset: 0, Len: 1}, nil
 	}
-	v := target.Field(0).Interface()
-	if _, err := Decode(b[1:], v); err != nil {
+
+	v := target.FieldByName("Value")
+	info, err := Decode(b[1:], &v)
+	if err != nil {
 		return nil, err
 	}
-	return Option{Value: v}, nil
+	return &ByteInfo{Offset: 0, Len: info.End() + 1}, nil
 }
