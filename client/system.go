@@ -18,22 +18,22 @@ type system struct {
 }
 
 func (s *system) Name() (string, error) {
-	result, err := s.call("name", emptyParams)
+	result, err := s.call("name", nil)
 	return result.(string), err
 }
 
 func (s *system) Version() (string, error) {
-	result, err := s.call("version", emptyParams)
+	result, err := s.call("version", nil)
 	return result.(string), err
 }
 
 func (s *system) Chain() (string, error) {
-	result, err := s.call("chain", emptyParams)
+	result, err := s.call("chain", nil)
 	return result.(string), err
 }
 
 func (s *system) Health() (*rpccall.Health, error) {
-	result, err := s.call("health", emptyParams)
+	result, err := s.call("health", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -43,19 +43,19 @@ func (s *system) Health() (*rpccall.Health, error) {
 }
 
 func (s *system) Peers() ([]rpccall.PeerInfo, error) {
-	result, err := s.call("peers", emptyParams)
+	result, err := s.call("peers", nil)
 	var peers []rpccall.PeerInfo
 	err = decoder.MapDecode(result, &peers)
 	return peers, err
 }
 
 func (s *system) NetworkState() (interface{}, error) {
-	result, err := s.call("networkState", emptyParams)
+	result, err := s.call("networkState", nil)
 	return result, err
 }
 
 func (s *system) Properties() (*rpccall.ChainProperties, error) {
-	result, err := s.call("properties", emptyParams)
+	result, err := s.call("properties", nil)
 	if err != nil {
 		return nil, err
 	}

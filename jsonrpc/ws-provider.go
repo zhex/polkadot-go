@@ -22,10 +22,10 @@ func handleResponse(p *WsProvider) error {
 		id := resp.Params.Subscription
 		if callback, ok := p.subscribes[id]; ok {
 			if r, ok := p.waitingResponse[id]; ok {
-				callback(r)
+				callback(r.Params.Result)
 				delete(p.waitingResponse, id)
 			}
-			callback(resp)
+			callback(resp.Params.Result)
 		} else {
 			p.waitingResponse[id] = resp
 		}
@@ -45,8 +45,8 @@ func NewWsProvider(endpoint string) (*WsProvider, error) {
 		client:          client,
 		endpoint:        endpoint,
 		id:              0,
-		msgChan:         make(map[int](chan *Response)),
-		subscribes:      make(map[int]func(*Response)),
+		msgChan:         make(map[int]chan *Response),
+		subscribes:      make(map[int]func(interface{})),
 		waitingResponse: make(map[int]*Response),
 		ctx:             ctx,
 		ctxCancel:       cancel,
@@ -75,7 +75,7 @@ type WsProvider struct {
 	endpoint        string
 	id              int
 	msgChan         map[int]chan *Response
-	subscribes      map[int]func(*Response)
+	subscribes      map[int]func(interface{})
 	waitingResponse map[int]*Response
 	ctx             context.Context
 	ctxCancel       context.CancelFunc
@@ -100,7 +100,7 @@ func (p *WsProvider) Call(method string, params []interface{}) (*Response, error
 	return resp, nil
 }
 
-func (p *WsProvider) Subscribe(method string, params []interface{}, callback func(*Response)) (int, error) {
+func (p *WsProvider) Subscribe(method string, params []interface{}, callback func(interface{})) (int, error) {
 	resp, err := p.Call(method, params)
 	if err != nil {
 		return -1, err
@@ -124,7 +124,7 @@ func (p *WsProvider) Unsubscribe(method string, id int) error {
 func (p *WsProvider) Close() {
 	p.ctxCancel()
 	p.msgChan = make(map[int]chan *Response)
-	p.subscribes = make(map[int]func(*Response))
+	p.subscribes = make(map[int]func(interface{}))
 	p.waitingResponse = make(map[int]*Response)
 	p.client.Close()
 }

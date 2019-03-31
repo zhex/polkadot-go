@@ -1,7 +1,6 @@
 package client
 
 import (
-	"fmt"
 	"github.com/zhex/polkadot-go/jsonrpc"
 	"github.com/zhex/polkadot-go/types/primitives"
 	"github.com/zhex/polkadot-go/types/rpccall"
@@ -47,8 +46,11 @@ func (c *chain) GetBlockHash(n *uint64) (*primitives.Hash256, error) {
 }
 
 func (c *chain) GetFinalisedHead() (*primitives.Hash256, error) {
-	// todo
-	return nil, nil
+	result, err := c.call("getFinalisedHead", nil)
+	if err != nil {
+		return nil, err
+	}
+	return primitives.NewHash256(result.(string)), err
 }
 
 func (c *chain) GetHeader(hash *primitives.Hash256) (*_type.BlockHeader, error) {
@@ -60,7 +62,6 @@ func (c *chain) GetHeader(hash *primitives.Hash256) (*_type.BlockHeader, error) 
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(result)
 	var header _type.BlockHeader
 	err = decoder.MapDecode(result, &header)
 	return &header, err
@@ -76,12 +77,20 @@ func (c *chain) GetRuntimeVersion() (*rpccall.RuntimeVersion, error) {
 	return &v, nil
 }
 
-func (c *chain) SubscribeFinalisedHeads() {
-	// todo
+func (c *chain) SubscribeFinalisedHeads(callback func(*_type.BlockHeader)) (int, error) {
+	return c.subscribe("subscribeFinalisedHeads", nil, func(result interface{}) {
+		var header _type.BlockHeader
+		decoder.MapDecode(result, &header)
+		callback(&header)
+	})
 }
 
-func (c *chain) SubscribeNewHead() {
-	// todo
+func (c *chain) SubscribeNewHead(callback func(*_type.BlockHeader)) (int, error) {
+	return c.subscribe("subscribeNewHead", nil, func(result interface{}) {
+		var header _type.BlockHeader
+		decoder.MapDecode(result, &header)
+		callback(&header)
+	})
 }
 
 func (c *chain) SubscribeRuntimeVersion() {
